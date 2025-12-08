@@ -66,29 +66,9 @@ export function AppCard({ app }: AppCardProps) {
                         <h3 className="text-lg font-bold tracking-tight mb-2 line-clamp-1 group-hover:text-primary transition-colors">
                             {app.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                        <p className="text-sm text-muted-foreground line-clamp-3">
                             {app.short_desc || 'No description available'}
                         </p>
-
-                        {/* Tags */}
-                        {app.tags && app.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
-                                {app.tags.slice(0, 3).map((tag) => (
-                                    <Badge
-                                        key={tag}
-                                        variant="secondary"
-                                        className="text-xs px-2 py-0.5 bg-secondary/50"
-                                    >
-                                        {tag}
-                                    </Badge>
-                                ))}
-                                {app.tags.length > 3 && (
-                                    <Badge variant="outline" className="text-xs px-2 py-0.5">
-                                        +{app.tags.length - 3}
-                                    </Badge>
-                                )}
-                            </div>
-                        )}
                     </CardContent>
 
                     {/* Footer */}

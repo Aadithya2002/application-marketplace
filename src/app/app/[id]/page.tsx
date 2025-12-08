@@ -91,21 +91,10 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                         transition={{ duration: 0.5 }}
                         className="max-w-4xl"
                     >
-                        {/* Title FIRST */}
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+                        {/* Title */}
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-6">
                             {app.name}
                         </h1>
-
-                        {/* Tags BELOW title */}
-                        {app.tags && app.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-6">
-                                {app.tags.map((tag) => (
-                                    <Badge key={tag} variant="secondary" className="text-sm px-3 py-1">
-                                        {tag}
-                                    </Badge>
-                                ))}
-                            </div>
-                        )}
 
                         {/* Description */}
                         <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
@@ -126,10 +115,10 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                             </Link>
                         </div>
 
-                        {/* Tech Stack with Icons */}
+                        {/* Tech Stack with Large Icons */}
                         {techStack.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-3">
-                                <span className="text-sm text-muted-foreground mr-2">Built with:</span>
+                            <div className="space-y-3">
+                                <span className="text-sm text-muted-foreground">Built with:</span>
                                 <TechStack technologies={techStack} />
                             </div>
                         )}
@@ -317,6 +306,6 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                     </div>
                 </DialogContent>
             </Dialog>
-        </main>
+        </main >
     )
 }

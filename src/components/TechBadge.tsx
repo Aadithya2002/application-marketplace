@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 interface TechBadgeProps {
@@ -7,56 +8,189 @@ interface TechBadgeProps {
     className?: string
 }
 
-// Map of technology names to their icons/colors
-const techConfig: Record<string, { icon: string; color: string; bgColor: string }> = {
-    'react': { icon: '⚛️', color: 'text-cyan-500', bgColor: 'bg-cyan-500/10' },
-    'next.js': { icon: '▲', color: 'text-foreground', bgColor: 'bg-foreground/10' },
-    'nextjs': { icon: '▲', color: 'text-foreground', bgColor: 'bg-foreground/10' },
-    'node.js': { icon: '⬢', color: 'text-green-500', bgColor: 'bg-green-500/10' },
-    'nodejs': { icon: '⬢', color: 'text-green-500', bgColor: 'bg-green-500/10' },
-    'node': { icon: '⬢', color: 'text-green-500', bgColor: 'bg-green-500/10' },
-    'typescript': { icon: 'TS', color: 'text-blue-500', bgColor: 'bg-blue-500/10' },
-    'ts': { icon: 'TS', color: 'text-blue-500', bgColor: 'bg-blue-500/10' },
-    'javascript': { icon: 'JS', color: 'text-yellow-500', bgColor: 'bg-yellow-500/10' },
-    'js': { icon: 'JS', color: 'text-yellow-500', bgColor: 'bg-yellow-500/10' },
-    'tailwind': { icon: '🌊', color: 'text-cyan-400', bgColor: 'bg-cyan-400/10' },
-    'tailwindcss': { icon: '🌊', color: 'text-cyan-400', bgColor: 'bg-cyan-400/10' },
-    'supabase': { icon: '⚡', color: 'text-emerald-500', bgColor: 'bg-emerald-500/10' },
-    'prisma': { icon: '◮', color: 'text-indigo-500', bgColor: 'bg-indigo-500/10' },
-    'mongodb': { icon: '🍃', color: 'text-green-600', bgColor: 'bg-green-600/10' },
-    'postgresql': { icon: '🐘', color: 'text-blue-600', bgColor: 'bg-blue-600/10' },
-    'postgres': { icon: '🐘', color: 'text-blue-600', bgColor: 'bg-blue-600/10' },
-    'python': { icon: '🐍', color: 'text-yellow-500', bgColor: 'bg-yellow-500/10' },
-    'docker': { icon: '🐳', color: 'text-blue-500', bgColor: 'bg-blue-500/10' },
-    'aws': { icon: '☁️', color: 'text-orange-500', bgColor: 'bg-orange-500/10' },
-    'vercel': { icon: '▲', color: 'text-foreground', bgColor: 'bg-foreground/10' },
-    'firebase': { icon: '🔥', color: 'text-orange-500', bgColor: 'bg-orange-500/10' },
-    'graphql': { icon: '◈', color: 'text-pink-500', bgColor: 'bg-pink-500/10' },
-    'redis': { icon: '◉', color: 'text-red-500', bgColor: 'bg-red-500/10' },
-    'stripe': { icon: '💳', color: 'text-purple-500', bgColor: 'bg-purple-500/10' },
+// Map of technology names to their logos and colors
+const techConfig: Record<string, { logo: string; name: string; bgColor: string }> = {
+    'react': {
+        logo: '/tech-logos/react.svg',
+        name: 'React',
+        bgColor: 'bg-[#20232A]'
+    },
+    'next.js': {
+        logo: '/tech-logos/nextjs.svg',
+        name: 'Next.js',
+        bgColor: 'bg-black'
+    },
+    'nextjs': {
+        logo: '/tech-logos/nextjs.svg',
+        name: 'Next.js',
+        bgColor: 'bg-black'
+    },
+    'node.js': {
+        logo: '/tech-logos/nodejs.svg',
+        name: 'Node.js',
+        bgColor: 'bg-[#339933]'
+    },
+    'nodejs': {
+        logo: '/tech-logos/nodejs.svg',
+        name: 'Node.js',
+        bgColor: 'bg-[#339933]'
+    },
+    'node': {
+        logo: '/tech-logos/nodejs.svg',
+        name: 'Node.js',
+        bgColor: 'bg-[#339933]'
+    },
+    'typescript': {
+        logo: '/tech-logos/typescript.svg',
+        name: 'TypeScript',
+        bgColor: 'bg-[#3178C6]'
+    },
+    'ts': {
+        logo: '/tech-logos/typescript.svg',
+        name: 'TypeScript',
+        bgColor: 'bg-[#3178C6]'
+    },
+    'javascript': {
+        logo: '/tech-logos/javascript.svg',
+        name: 'JavaScript',
+        bgColor: 'bg-[#F7DF1E]'
+    },
+    'js': {
+        logo: '/tech-logos/javascript.svg',
+        name: 'JavaScript',
+        bgColor: 'bg-[#F7DF1E]'
+    },
+    'tailwind': {
+        logo: '/tech-logos/tailwind.svg',
+        name: 'Tailwind CSS',
+        bgColor: 'bg-[#0EA5E9]'
+    },
+    'tailwindcss': {
+        logo: '/tech-logos/tailwind.svg',
+        name: 'Tailwind CSS',
+        bgColor: 'bg-[#0EA5E9]'
+    },
+    'supabase': {
+        logo: '/tech-logos/supabase.svg',
+        name: 'Supabase',
+        bgColor: 'bg-[#3ECF8E]'
+    },
+    'mongodb': {
+        logo: '/tech-logos/mongodb.svg',
+        name: 'MongoDB',
+        bgColor: 'bg-[#47A248]'
+    },
+    'postgresql': {
+        logo: '/tech-logos/postgresql.svg',
+        name: 'PostgreSQL',
+        bgColor: 'bg-[#4169E1]'
+    },
+    'postgres': {
+        logo: '/tech-logos/postgresql.svg',
+        name: 'PostgreSQL',
+        bgColor: 'bg-[#4169E1]'
+    },
+    'python': {
+        logo: '/tech-logos/python.svg',
+        name: 'Python',
+        bgColor: 'bg-[#3776AB]'
+    },
+    'docker': {
+        logo: '/tech-logos/docker.svg',
+        name: 'Docker',
+        bgColor: 'bg-[#2496ED]'
+    },
+    'aws': {
+        logo: '/tech-logos/aws.svg',
+        name: 'AWS',
+        bgColor: 'bg-[#FF9900]'
+    },
+    'vercel': {
+        logo: '/tech-logos/vercel.svg',
+        name: 'Vercel',
+        bgColor: 'bg-black'
+    },
+    'firebase': {
+        logo: '/tech-logos/firebase.svg',
+        name: 'Firebase',
+        bgColor: 'bg-[#FFCA28]'
+    },
+    'prisma': {
+        logo: '/tech-logos/prisma.svg',
+        name: 'Prisma',
+        bgColor: 'bg-[#2D3748]'
+    },
+    'graphql': {
+        logo: '/tech-logos/graphql.svg',
+        name: 'GraphQL',
+        bgColor: 'bg-[#E10098]'
+    },
+    'redis': {
+        logo: '/tech-logos/redis.svg',
+        name: 'Redis',
+        bgColor: 'bg-[#DC382D]'
+    },
 }
 
-const getDefaultConfig = (tech: string) => ({
-    icon: tech.charAt(0).toUpperCase(),
-    color: 'text-muted-foreground',
-    bgColor: 'bg-muted',
-})
+// Fallback icons for technologies without logos
+const fallbackIcons: Record<string, string> = {
+    'react': '⚛️',
+    'next.js': '▲',
+    'nextjs': '▲',
+    'node.js': '⬢',
+    'nodejs': '⬢',
+    'node': '⬢',
+    'typescript': 'TS',
+    'ts': 'TS',
+    'javascript': 'JS',
+    'js': 'JS',
+    'tailwind': '🌊',
+    'tailwindcss': '🌊',
+    'supabase': '⚡',
+    'mongodb': '🍃',
+    'postgresql': '🐘',
+    'postgres': '🐘',
+    'python': '🐍',
+    'docker': '🐳',
+    'aws': '☁️',
+    'firebase': '🔥',
+    'prisma': '◮',
+    'graphql': '◈',
+    'redis': '◉',
+}
 
 export function TechBadge({ tech, className }: TechBadgeProps) {
     const normalizedTech = tech.toLowerCase().trim()
-    const config = techConfig[normalizedTech] || getDefaultConfig(tech)
+    const config = techConfig[normalizedTech]
+    const fallbackIcon = fallbackIcons[normalizedTech] || tech.charAt(0).toUpperCase()
 
     return (
         <div
             className={cn(
-                'inline-flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold transition-transform hover:scale-110',
-                config.bgColor,
-                config.color,
+                'inline-flex items-center gap-2 px-4 py-2 rounded-xl transition-all hover:scale-105',
+                config?.bgColor || 'bg-muted',
+                'text-white font-medium text-sm shadow-md',
                 className
             )}
-            title={tech}
+            title={config?.name || tech}
         >
-            {config.icon}
+            {config ? (
+                <div className="relative w-6 h-6">
+                    <Image
+                        src={config.logo}
+                        alt={config.name}
+                        fill
+                        className="object-contain"
+                        onError={(e) => {
+                            // Fallback to icon if logo fails to load
+                            e.currentTarget.style.display = 'none'
+                        }}
+                    />
+                </div>
+            ) : (
+                <span className="text-lg">{fallbackIcon}</span>
+            )}
+            <span>{config?.name || tech}</span>
         </div>
     )
 }
@@ -70,7 +204,7 @@ export function TechStack({ technologies, className }: TechStackProps) {
     if (!technologies || technologies.length === 0) return null
 
     return (
-        <div className={cn('flex flex-wrap items-center gap-2', className)}>
+        <div className={cn('flex flex-wrap items-center gap-3', className)}>
             {technologies.map((tech) => (
                 <TechBadge key={tech} tech={tech} />
             ))}
