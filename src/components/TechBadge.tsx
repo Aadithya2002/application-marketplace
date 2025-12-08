@@ -40,6 +40,21 @@ const techConfig: Record<string, { logo: string; name: string; bgColor: string }
         name: 'Node.js',
         bgColor: 'bg-[#339933]'
     },
+    'express': {
+        logo: '/tech-logos/express.svg',
+        name: 'Express.js',
+        bgColor: 'bg-[#000000]'
+    },
+    'express.js': {
+        logo: '/tech-logos/express.svg',
+        name: 'Express.js',
+        bgColor: 'bg-[#000000]'
+    },
+    'expressjs': {
+        logo: '/tech-logos/express.svg',
+        name: 'Express.js',
+        bgColor: 'bg-[#000000]'
+    },
     'typescript': {
         logo: '/tech-logos/typescript.svg',
         name: 'TypeScript',
@@ -63,12 +78,17 @@ const techConfig: Record<string, { logo: string; name: string; bgColor: string }
     'tailwind': {
         logo: '/tech-logos/tailwind.svg',
         name: 'Tailwind CSS',
-        bgColor: 'bg-[#0EA5E9]'
+        bgColor: 'bg-[#06B6D4]'
     },
     'tailwindcss': {
         logo: '/tech-logos/tailwind.svg',
         name: 'Tailwind CSS',
-        bgColor: 'bg-[#0EA5E9]'
+        bgColor: 'bg-[#06B6D4]'
+    },
+    'tailwind css': {
+        logo: '/tech-logos/tailwind.svg',
+        name: 'Tailwind CSS',
+        bgColor: 'bg-[#06B6D4]'
     },
     'supabase': {
         logo: '/tech-logos/supabase.svg',
@@ -129,6 +149,11 @@ const techConfig: Record<string, { logo: string; name: string; bgColor: string }
         logo: '/tech-logos/redis.svg',
         name: 'Redis',
         bgColor: 'bg-[#DC382D]'
+    },
+    'github': {
+        logo: '/tech-logos/github.svg',
+        name: 'GitHub',
+        bgColor: 'bg-[#181717]'
     },
 }
 
