@@ -4,8 +4,10 @@ import { useEffect, useState } from 'react'
 import { isValidUrl } from '@/lib/utils'
 import { useApp } from '@/hooks/useAppData'
 import { useAuth } from '@/hooks/useAuth'
+import { useProfile } from '@/hooks/useProfile'
 import { AuthModal } from '@/components/AuthModal'
 import { ContactForm } from '@/components/ContactForm'
+import { NameEntryModal } from '@/components/NameEntryModal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Loader2, ArrowLeft, MessageCircle, CreditCard } from 'lucide-react'
@@ -18,6 +20,7 @@ export default function BuyPage({ params }: { params: Promise<{ id: string }> })
     const { id } = use(params)
     const { data: app, isLoading: appLoading, error: appError } = useApp(id)
     const { user, loading: authLoading } = useAuth()
+    const { needsName, updateProfile, loading: profileLoading } = useProfile()
     const [showAuthModal, setShowAuthModal] = useState(false)
 
     // Show auth modal if user tries to access buy page without being logged in
@@ -27,7 +30,7 @@ export default function BuyPage({ params }: { params: Promise<{ id: string }> })
         }
     }, [authLoading, user, showAuthModal])
 
-    if (appLoading || authLoading) {
+    if (appLoading || authLoading || profileLoading) {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -138,6 +141,15 @@ export default function BuyPage({ params }: { params: Promise<{ id: string }> })
                 onOpenChange={setShowAuthModal}
                 redirectTo={`${typeof window !== 'undefined' ? window.location.origin : ''}/buy/${id}`}
             />
+
+            {/* Name Entry Modal - shown after OAuth if name not set */}
+            {user && needsName && (
+                <NameEntryModal
+                    open={needsName}
+                    onComplete={updateProfile}
+                />
+            )}
         </main>
     )
 }
+

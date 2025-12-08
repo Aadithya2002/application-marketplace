@@ -3,24 +3,25 @@
 import { isValidUrl } from '@/lib/utils'
 import { useApp, useAppWorkflow } from '@/hooks/useAppData'
 import { YouTubePlayer } from '@/components/YouTubePlayer'
-import { CodeTabs } from '@/components/CodeTabs'
 import { WorkflowViewer } from '@/components/WorkflowViewer'
+import { ScreenshotGallery } from '@/components/ScreenshotGallery'
+import { TechStack } from '@/components/TechBadge'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Loader2, ShoppingCart, ArrowLeft, Play, ImageOff, Layers, Code, Workflow, BarChart3, CheckCircle2, ExternalLink } from 'lucide-react'
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Loader2, ShoppingCart, ArrowLeft, Play, ImageOff, Workflow, CheckCircle2, Lock } from 'lucide-react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
 import { use, useState } from 'react'
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog'
 
 export default function AppDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = use(params)
     const { data: app, isLoading: appLoading, error: appError } = useApp(id)
     const { data: workflow, isLoading: workflowLoading } = useAppWorkflow(id)
-    const [selectedImage, setSelectedImage] = useState<string | null>(null)
+    const [showPurchaseModal, setShowPurchaseModal] = useState(false)
 
     if (appLoading || workflowLoading) {
         return (
@@ -49,34 +50,20 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
         )
     }
 
-    const codeFiles = [
-        { fileName: 'Frontend', code: app.frontend_code || '// No code available', language: 'tsx' },
-        { fileName: 'Backend', code: app.backend_code || '// No code available', language: 'typescript' },
-        { fileName: 'Config', code: app.config_code || '// No code available', language: 'json' },
-        { fileName: 'Structure', code: app.folder_structure || '// No structure available', language: 'bash' },
-    ]
-
     const galleryImages = app.gallery_images || []
     const techStack = app.tech_stack || []
 
+    // What's included items (without "Support included")
+    const includedFeatures = [
+        'Full source code',
+        'Documentation',
+        'Free updates',
+        'Modern tech stack',
+        'Production ready',
+    ]
+
     return (
         <main className="min-h-screen bg-background">
-            {/* Navigation */}
-            <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
-                <div className="container mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
-                    <Link href="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-                        <ArrowLeft className="h-4 w-4" />
-                        <span>Back to Marketplace</span>
-                    </Link>
-                    <Link href={`/buy/${app.id}`}>
-                        <Button size="lg" className="gap-2 rounded-xl shadow-lg hover:shadow-xl transition-shadow">
-                            <ShoppingCart className="h-5 w-5" />
-                            Buy Now - ${app.price}
-                        </Button>
-                    </Link>
-                </div>
-            </nav>
-
             {/* Hero Section */}
             <section className="relative">
                 {/* Background */}
@@ -104,9 +91,14 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                         transition={{ duration: 0.5 }}
                         className="max-w-4xl"
                     >
-                        {/* Tags */}
+                        {/* Title FIRST */}
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
+                            {app.name}
+                        </h1>
+
+                        {/* Tags BELOW title */}
                         {app.tags && app.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-2 mb-4">
+                            <div className="flex flex-wrap gap-2 mb-6">
                                 {app.tags.map((tag) => (
                                     <Badge key={tag} variant="secondary" className="text-sm px-3 py-1">
                                         {tag}
@@ -114,11 +106,6 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                                 ))}
                             </div>
                         )}
-
-                        {/* Title */}
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4">
-                            {app.name}
-                        </h1>
 
                         {/* Description */}
                         <p className="text-xl text-muted-foreground mb-8 max-w-2xl">
@@ -139,15 +126,11 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                             </Link>
                         </div>
 
-                        {/* Tech Stack */}
+                        {/* Tech Stack with Icons */}
                         {techStack.length > 0 && (
-                            <div className="flex flex-wrap items-center gap-2">
+                            <div className="flex flex-wrap items-center gap-3">
                                 <span className="text-sm text-muted-foreground mr-2">Built with:</span>
-                                {techStack.map((tech) => (
-                                    <Badge key={tech} variant="outline" className="bg-background/50">
-                                        {tech}
-                                    </Badge>
-                                ))}
+                                <TechStack technologies={techStack} />
                             </div>
                         )}
                     </motion.div>
@@ -161,14 +144,6 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                         <TabsTrigger value="overview" className="px-6 py-3 gap-2 rounded-lg">
                             <Play className="h-4 w-4" />
                             Overview
-                        </TabsTrigger>
-                        <TabsTrigger value="gallery" className="px-6 py-3 gap-2 rounded-lg">
-                            <Layers className="h-4 w-4" />
-                            Screenshots
-                        </TabsTrigger>
-                        <TabsTrigger value="code" className="px-6 py-3 gap-2 rounded-lg">
-                            <Code className="h-4 w-4" />
-                            Code Preview
                         </TabsTrigger>
                         <TabsTrigger value="workflow" className="px-6 py-3 gap-2 rounded-lg">
                             <Workflow className="h-4 w-4" />
@@ -194,17 +169,7 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                                         <YouTubePlayer url={app.youtube_url} />
                                     </div>
                                 </section>
-                            ) : (
-                                <Card className="mb-12 border-dashed">
-                                    <CardContent className="py-12 text-center">
-                                        <Play className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                        <h3 className="text-lg font-semibold mb-2">No Video Demo</h3>
-                                        <p className="text-muted-foreground">
-                                            Video demonstration is not available for this application.
-                                        </p>
-                                    </CardContent>
-                                </Card>
-                            )}
+                            ) : null}
 
                             {/* Description Section */}
                             <section>
@@ -220,18 +185,19 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                                 </Card>
                             </section>
 
-                            {/* Features List */}
+                            {/* Screenshots Section - Moved here from separate tab */}
+                            {galleryImages.length > 0 && (
+                                <section>
+                                    <h2 className="text-2xl font-bold mb-6">Application Screenshots</h2>
+                                    <ScreenshotGallery images={galleryImages} appName={app.name} />
+                                </section>
+                            )}
+
+                            {/* What's Included (without Support) */}
                             <section>
                                 <h2 className="text-2xl font-bold mb-6">What's Included</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {[
-                                        'Full source code',
-                                        'Documentation',
-                                        'Free updates',
-                                        'Support included',
-                                        'Modern tech stack',
-                                        'Production ready',
-                                    ].map((feature) => (
+                                    {includedFeatures.map((feature) => (
                                         <div key={feature} className="flex items-center gap-3 p-4 rounded-xl bg-muted/50">
                                             <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
                                             <span>{feature}</span>
@@ -239,75 +205,50 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                                     ))}
                                 </div>
                             </section>
-                        </motion.div>
-                    </TabsContent>
 
-                    {/* Gallery Tab */}
-                    <TabsContent value="gallery">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">Application Screenshots</h2>
+                            {/* Locked Code Preview Section */}
+                            <section>
+                                <h2 className="text-2xl font-bold mb-6">Code Preview</h2>
+                                <Card className="relative overflow-hidden">
+                                    <CardContent className="py-12">
+                                        {/* Blurred code background */}
+                                        <div className="absolute inset-0 bg-gradient-to-br from-muted/80 to-muted/50 backdrop-blur-sm" />
 
-                            {galleryImages.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {galleryImages.map((imageUrl, index) => (
-                                        <Dialog key={index}>
-                                            <DialogTrigger asChild>
-                                                <motion.div
-                                                    whileHover={{ scale: 1.02 }}
-                                                    className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer group shadow-lg hover:shadow-2xl transition-shadow"
-                                                >
-                                                    <Image
-                                                        src={imageUrl}
-                                                        alt={`Screenshot ${index + 1}`}
-                                                        fill
-                                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                                    />
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                                        <ExternalLink className="h-8 w-8 text-white" />
-                                                    </div>
-                                                </motion.div>
-                                            </DialogTrigger>
-                                            <DialogContent className="max-w-5xl max-h-[90vh] p-0 overflow-hidden">
-                                                <DialogTitle className="sr-only">Screenshot {index + 1}</DialogTitle>
-                                                <div className="relative w-full h-[80vh]">
-                                                    <Image
-                                                        src={imageUrl}
-                                                        alt={`Screenshot ${index + 1}`}
-                                                        fill
-                                                        className="object-contain"
-                                                    />
+                                        {/* Fake code lines for visual effect */}
+                                        <div className="relative opacity-20 blur-sm pointer-events-none select-none font-mono text-sm space-y-2 px-4">
+                                            <p>import {'{ useState }'} from 'react'</p>
+                                            <p>import {'{ Button }'} from '@/components/ui/button'</p>
+                                            <p></p>
+                                            <p>export function Component() {'{'}</p>
+                                            <p>  const [state, setState] = useState(null)</p>
+                                            <p>  return {'<div>...</div>'}</p>
+                                            <p>{'}'}</p>
+                                        </div>
+
+                                        {/* Lock overlay */}
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-[2px]">
+                                            <div className="text-center space-y-4">
+                                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10">
+                                                    <Lock className="h-8 w-8 text-primary" />
                                                 </div>
-                                            </DialogContent>
-                                        </Dialog>
-                                    ))}
-                                </div>
-                            ) : (
-                                <Card className="border-dashed">
-                                    <CardContent className="py-12 text-center">
-                                        <ImageOff className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                                        <h3 className="text-lg font-semibold mb-2">No Screenshots Available</h3>
-                                        <p className="text-muted-foreground">
-                                            Screenshots have not been uploaded for this application.
-                                        </p>
+                                                <div>
+                                                    <h3 className="text-lg font-semibold">Code Preview Locked</h3>
+                                                    <p className="text-muted-foreground text-sm mt-1 max-w-sm">
+                                                        Purchase this application to access the full source code
+                                                    </p>
+                                                </div>
+                                                <Button
+                                                    onClick={() => setShowPurchaseModal(true)}
+                                                    className="gap-2"
+                                                >
+                                                    <Lock className="h-4 w-4" />
+                                                    Unlock Code
+                                                </Button>
+                                            </div>
+                                        </div>
                                     </CardContent>
                                 </Card>
-                            )}
-                        </motion.div>
-                    </TabsContent>
-
-                    {/* Code Tab */}
-                    <TabsContent value="code">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <h2 className="text-2xl font-bold mb-6">Code Preview</h2>
-                            <CodeTabs files={codeFiles} />
+                            </section>
                         </motion.div>
                     </TabsContent>
 
@@ -325,7 +266,7 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                 </Tabs>
             </div>
 
-            {/* Floating Buy Bar */}
+            {/* Floating Buy Bar (Mobile) */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -344,6 +285,38 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                     </Link>
                 </div>
             </motion.div>
+
+            {/* Purchase Modal */}
+            <Dialog open={showPurchaseModal} onOpenChange={setShowPurchaseModal}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogTitle className="text-xl font-bold text-center">
+                        Unlock Full Source Code
+                    </DialogTitle>
+                    <DialogDescription className="text-center">
+                        To unlock the complete source code, please purchase this application.
+                    </DialogDescription>
+                    <div className="py-6 text-center space-y-4">
+                        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10">
+                            <Lock className="h-10 w-10 text-primary" />
+                        </div>
+                        <div>
+                            <p className="text-3xl font-bold">${app.price}</p>
+                            <p className="text-muted-foreground text-sm mt-1">One-time purchase</p>
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <Link href={`/buy/${app.id}`} className="w-full">
+                            <Button className="w-full h-12 gap-2">
+                                <ShoppingCart className="h-5 w-5" />
+                                Purchase Now
+                            </Button>
+                        </Link>
+                        <Button variant="outline" onClick={() => setShowPurchaseModal(false)}>
+                            Maybe Later
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </main>
     )
 }
