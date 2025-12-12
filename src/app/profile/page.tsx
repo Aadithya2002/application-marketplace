@@ -154,22 +154,45 @@ export default function ProfilePage() {
                                 </div>
                             ) : (
                                 <div className="space-y-3">
-                                    {leads.map((lead) => (
-                                        <div
-                                            key={lead.id}
-                                            className="flex items-center justify-between p-4 rounded-lg bg-muted/50"
-                                        >
-                                            <div>
-                                                <p className="font-medium">{lead.app_name || 'Unknown App'}</p>
-                                                <p className="text-sm text-muted-foreground">
-                                                    Requested {new Date(lead.created_at).toLocaleDateString()}
-                                                </p>
+                                    {leads.map((lead) => {
+                                        const status = lead.status || 'pending'
+                                        const statusConfig = {
+                                            pending: {
+                                                label: 'Pending',
+                                                className: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400'
+                                            },
+                                            approved: {
+                                                label: 'Approved',
+                                                className: 'bg-blue-500/10 text-blue-600 dark:text-blue-400'
+                                            },
+                                            delivered: {
+                                                label: 'Delivered',
+                                                className: 'bg-green-500/10 text-green-600 dark:text-green-400'
+                                            }
+                                        }
+                                        const config = statusConfig[status] || statusConfig.pending
+
+                                        return (
+                                            <div
+                                                key={lead.id}
+                                                className="flex items-center justify-between p-4 rounded-lg bg-muted/50 hover:bg-muted/80 transition-colors"
+                                            >
+                                                <div>
+                                                    <p className="font-medium">{lead.app_name || 'Unknown App'}</p>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Requested {new Date(lead.created_at).toLocaleDateString('en-US', {
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric'
+                                                        })}
+                                                    </p>
+                                                </div>
+                                                <div className={`text-xs px-3 py-1.5 rounded-full font-medium ${config.className}`}>
+                                                    {config.label}
+                                                </div>
                                             </div>
-                                            <div className="text-xs px-2 py-1 rounded-full bg-yellow-500/10 text-yellow-600 dark:text-yellow-400">
-                                                Pending
-                                            </div>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                 </div>
                             )}
                         </CardContent>

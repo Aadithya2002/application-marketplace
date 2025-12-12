@@ -16,6 +16,7 @@ export interface App {
     gallery_images?: string[]
     landing_screenshot?: string
     detail_screenshot?: string
+    category?: string
     created_at: string
 }
 
@@ -46,6 +47,7 @@ export interface Lead {
     email: string
     phone?: string
     application_id: string
+    status?: 'pending' | 'approved' | 'delivered'
     created_at: string
 }
 

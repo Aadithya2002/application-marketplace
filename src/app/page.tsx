@@ -2,20 +2,31 @@
 
 import { useApps } from '@/hooks/useAppData'
 import { AppCard } from '@/components/AppCard'
+import { TrustSection } from '@/components/TrustSection'
+import { CategoryFilter } from '@/components/CategoryFilter'
 import { motion } from 'framer-motion'
-import { Loader2, Search, Sparkles, Package } from 'lucide-react'
+import { Loader2, Search, Sparkles, Package, ArrowRight } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 
 export default function Home() {
   const { data: apps, isLoading, error } = useApps()
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
-  const filteredApps = apps?.filter(app =>
-    app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    app.short_desc?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    app.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  )
+  const filteredApps = apps?.filter(app => {
+    const matchesSearch =
+      app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.short_desc?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      app.tags?.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+
+    const matchesCategory = selectedCategory === 'all' ||
+      app.category?.toLowerCase() === selectedCategory ||
+      app.tags?.some(tag => tag.toLowerCase().includes(selectedCategory))
+
+    return matchesSearch && matchesCategory
+  })
 
   if (isLoading) {
     return (
@@ -36,7 +47,7 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen">
+    <>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
         {/* Decorative elements */}
@@ -45,7 +56,7 @@ export default function Home() {
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-primary/5 rounded-full blur-3xl" />
         </div>
 
-        <div className="container mx-auto px-4 md:px-8 py-16 md:py-24 relative z-10">
+        <div className="container mx-auto px-4 md:px-8 py-12 md:py-20 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -54,39 +65,39 @@ export default function Home() {
           >
             <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
               <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">Premium Applications</span>
+              <span className="text-sm font-medium text-primary">New apps every week</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
+            {/* Responsive Typography using clamp */}
+            <h1 className="font-extrabold tracking-tight mb-6" style={{ fontSize: 'clamp(2rem, 8vw, 4.5rem)', lineHeight: 1.1 }}>
               <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
-                Application
+                Premium Production-Ready
               </span>
               <br />
               <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                Marketplace
+                Applications
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-              Discover and deploy production-ready applications with modern architecture,
-              beautiful UI, and comprehensive documentation.
+            <p className="text-muted-foreground max-w-2xl mx-auto mb-8" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)' }}>
+              100% source code included • Free lifetime updates • Direct founder support
             </p>
 
-            {/* Search Bar */}
+            {/* Search Bar - Smaller on mobile */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="max-w-xl mx-auto"
+              className="max-w-md mx-auto"
             >
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                 <Input
                   type="text"
-                  placeholder="Search applications..."
+                  placeholder="Search apps..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-4 py-6 text-lg rounded-2xl border-border/50 bg-background/80 backdrop-blur-sm shadow-lg focus:shadow-xl focus:border-primary/50 transition-all"
+                  className="pl-12 pr-4 h-12 md:h-14 text-base rounded-xl border-border/50 bg-background/80 backdrop-blur-sm shadow-lg focus:shadow-xl focus:border-primary/50 transition-all"
                 />
               </div>
             </motion.div>
@@ -94,8 +105,24 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Trust Section */}
+      <TrustSection />
+
       {/* Apps Grid Section */}
       <section className="container mx-auto px-4 md:px-8 py-12 md:py-16">
+        {/* Category Filter */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="mb-8"
+        >
+          <CategoryFilter
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
+        </motion.div>
+
         {/* Results Header */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -104,17 +131,17 @@ export default function Home() {
           className="flex items-center justify-between mb-8"
         >
           <div>
-            <h2 className="text-2xl font-bold">
-              {searchQuery ? 'Search Results' : 'All Applications'}
+            <h2 className="text-xl md:text-2xl font-bold">
+              {searchQuery ? 'Search Results' : selectedCategory === 'all' ? 'All Applications' : `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Apps`}
             </h2>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-muted-foreground text-sm mt-1">
               {filteredApps?.length || 0} application{(filteredApps?.length || 0) !== 1 ? 's' : ''} available
             </p>
           </div>
         </motion.div>
 
-        {/* Apps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {/* Apps Grid - Responsive */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
           {filteredApps?.map((app, index) => (
             <motion.div
               key={app.id}
@@ -139,6 +166,13 @@ export default function Home() {
             <p className="text-muted-foreground">
               Try adjusting your search terms or browse all applications
             </p>
+            <Button
+              variant="outline"
+              onClick={() => { setSearchQuery(''); setSelectedCategory('all'); }}
+              className="mt-4"
+            >
+              Clear filters
+            </Button>
           </motion.div>
         )}
 
@@ -157,20 +191,31 @@ export default function Home() {
         )}
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border/50 bg-muted/30">
-        <div className="container mx-auto px-4 md:px-8 py-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <span className="font-bold text-lg">Application Marketplace</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              © 2024 Application Marketplace. All rights reserved.
+      {/* Coming Soon Section */}
+      <section className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 py-12 md:py-16">
+        <div className="container mx-auto px-4 md:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center"
+          >
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+              🚀 New Apps Every Week
+            </h2>
+            <p className="text-muted-foreground max-w-xl mx-auto mb-6">
+              We release new production-ready applications weekly. Stay tuned for more AI-powered tools,
+              productivity apps, and business solutions.
             </p>
-          </div>
+            <Button variant="outline" className="gap-2">
+              <Sparkles className="h-4 w-4" />
+              Subscribe for Updates
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </motion.div>
         </div>
-      </footer>
-    </main>
+      </section>
+    </>
   )
 }

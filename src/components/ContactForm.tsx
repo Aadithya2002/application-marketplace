@@ -81,18 +81,43 @@ export function ContactForm({ user, app, onSuccess }: ContactFormProps) {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-8 space-y-6"
             >
-                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30">
+                <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", delay: 0.1 }}
+                    className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-green-100 dark:bg-green-900/30"
+                >
                     <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
-                </div>
+                </motion.div>
                 <div className="space-y-2">
                     <h3 className="text-2xl font-bold">Request Submitted!</h3>
                     <p className="text-muted-foreground max-w-sm mx-auto">
-                        Our team will reach out to you soon at <span className="font-medium text-foreground">{email}</span>
+                        We've received your request for <span className="font-medium text-foreground">{app.name}</span>
                     </p>
                 </div>
-                <div className="p-4 rounded-xl bg-muted/50 border border-dashed">
+
+                {/* Next Steps */}
+                <div className="bg-muted/50 rounded-xl p-4 text-left space-y-3">
+                    <h4 className="font-semibold text-sm">What happens next?</h4>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                        <li className="flex items-start gap-2">
+                            <span className="text-primary">1.</span>
+                            <span>You'll receive a confirmation email at <span className="font-medium text-foreground">{email}</span></span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-primary">2.</span>
+                            <span>Our team will review your request within 24 hours</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="text-primary">3.</span>
+                            <span>You can track your request status in your <a href="/profile" className="text-primary hover:underline">Profile</a></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
                     <p className="text-sm text-muted-foreground">
-                        💳 Razorpay payment integration coming soon!
+                        💳 <span className="font-medium">Online payment coming soon!</span> For now, our team will guide you through the payment process.
                     </p>
                 </div>
             </motion.div>

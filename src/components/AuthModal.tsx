@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Loader2, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuth } from '@/hooks/useAuth'
+import { useNavigation } from '@/hooks/useNavigation'
 
 interface AuthModalProps {
     open: boolean
@@ -17,14 +18,25 @@ interface AuthModalProps {
 
 export function AuthModal({ open, onOpenChange, redirectTo }: AuthModalProps) {
     const { signInWithGoogle, signInWithEmail } = useAuth()
+    const { saveScrollPosition, restoreScrollPosition, saveIntendedDestination, currentPath } = useNavigation()
     const [email, setEmail] = useState('')
     const [loading, setLoading] = useState<'google' | 'email' | null>(null)
     const [emailSent, setEmailSent] = useState(false)
 
+    // Save scroll position and intended destination when modal opens
+    useEffect(() => {
+        if (open) {
+            saveScrollPosition()
+            saveIntendedDestination(redirectTo || currentPath || '/')
+        }
+    }, [open, saveScrollPosition, saveIntendedDestination, redirectTo, currentPath])
+
     const handleGoogleSignIn = async () => {
         try {
             setLoading('google')
-            await signInWithGoogle(redirectTo)
+            // Pass the redirect URL to the OAuth flow
+            const destination = redirectTo || currentPath || '/'
+            await signInWithGoogle(destination)
         } catch (error: any) {
             toast.error(error.message || 'Failed to sign in with Google')
             setLoading(null)
@@ -40,7 +52,8 @@ export function AuthModal({ open, onOpenChange, redirectTo }: AuthModalProps) {
 
         try {
             setLoading('email')
-            await signInWithEmail(email, redirectTo)
+            const destination = redirectTo || currentPath || '/'
+            await signInWithEmail(email, destination)
             setEmailSent(true)
             toast.success('Check your email for the login link!')
         } catch (error: any) {
@@ -54,6 +67,8 @@ export function AuthModal({ open, onOpenChange, redirectTo }: AuthModalProps) {
         if (!newOpen) {
             setEmail('')
             setEmailSent(false)
+            // Restore scroll position when closing without signing in
+            restoreScrollPosition()
         }
         onOpenChange(newOpen)
     }

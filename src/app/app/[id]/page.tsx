@@ -6,6 +6,7 @@ import { YouTubePlayer } from '@/components/YouTubePlayer'
 import { WorkflowViewer } from '@/components/WorkflowViewer'
 import { ScreenshotGallery } from '@/components/ScreenshotGallery'
 import { TechStack } from '@/components/TechBadge'
+import { FAQSection } from '@/components/FAQSection'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -238,6 +239,9 @@ export default function AppDetailPage({ params }: { params: Promise<{ id: string
                                     </CardContent>
                                 </Card>
                             </section>
+
+                            {/* FAQ Section */}
+                            <FAQSection />
                         </motion.div>
                     </TabsContent>
 
