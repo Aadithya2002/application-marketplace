@@ -3,9 +3,10 @@
 import { useApps } from '@/hooks/useAppData'
 import { AppCard } from '@/components/AppCard'
 import { TrustSection } from '@/components/TrustSection'
+import { PlatformSection } from '@/components/PlatformSection'
 import { CategoryFilter } from '@/components/CategoryFilter'
 import { motion } from 'framer-motion'
-import { Loader2, Search, Sparkles, Package, ArrowRight } from 'lucide-react'
+import { Loader2, Search, Package } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
@@ -63,11 +64,6 @@ export default function Home() {
             transition={{ duration: 0.6 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full mb-6">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <span className="text-sm font-medium text-primary">New apps every week</span>
-            </div>
-
             {/* Responsive Typography using clamp */}
             <h1 className="font-extrabold tracking-tight mb-6" style={{ fontSize: 'clamp(2rem, 8vw, 4.5rem)', lineHeight: 1.1 }}>
               <span className="bg-gradient-to-r from-foreground via-foreground to-foreground/70 bg-clip-text text-transparent">
@@ -80,7 +76,7 @@ export default function Home() {
             </h1>
 
             <p className="text-muted-foreground max-w-2xl mx-auto mb-8" style={{ fontSize: 'clamp(1rem, 2.5vw, 1.25rem)' }}>
-              100% source code included • Free lifetime updates • Direct founder support
+              100% source code included • Free lifetime updates
             </p>
 
             {/* Search Bar - Smaller on mobile */}
@@ -105,8 +101,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Trust Section */}
-      <TrustSection />
 
       {/* Apps Grid Section */}
       <section className="container mx-auto px-4 md:px-8 py-12 md:py-16">
@@ -142,15 +136,10 @@ export default function Home() {
 
         {/* Apps Grid - Responsive */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
-          {filteredApps?.map((app, index) => (
-            <motion.div
-              key={app.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.08 }}
-            >
+          {filteredApps?.map((app) => (
+            <div key={app.id}>
               <AppCard app={app} />
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -191,31 +180,11 @@ export default function Home() {
         )}
       </section>
 
-      {/* Coming Soon Section */}
-      <section className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 py-12 md:py-16">
-        <div className="container mx-auto px-4 md:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center"
-          >
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              🚀 New Apps Every Week
-            </h2>
-            <p className="text-muted-foreground max-w-xl mx-auto mb-6">
-              We release new production-ready applications weekly. Stay tuned for more AI-powered tools,
-              productivity apps, and business solutions.
-            </p>
-            <Button variant="outline" className="gap-2">
-              <Sparkles className="h-4 w-4" />
-              Subscribe for Updates
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </motion.div>
-        </div>
-      </section>
+      {/* Platform Availability Section */}
+      <PlatformSection />
+
+      {/* Why Trust APPTZO Section - At the end */}
+      <TrustSection />
     </>
   )
 }

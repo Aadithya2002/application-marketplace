@@ -2,7 +2,7 @@
 
 import { isValidUrl } from '@/lib/utils'
 import { App } from '@/types/app'
-import { motion } from 'framer-motion'
+
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -17,17 +17,7 @@ interface AppCardProps {
 export function AppCard({ app }: AppCardProps) {
     return (
         <Link href={`/app/${app.id}`} className="block">
-            <motion.div
-                layoutId={`card-${app.id}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                whileHover={{
-                    scale: 1.02,
-                    transition: { duration: 0.3, ease: 'easeOut' }
-                }}
-                transition={{ duration: 0.4 }}
-                className="cursor-pointer group h-full"
-            >
+            <div className="cursor-pointer group h-full transform hover:scale-[1.02] transition-transform duration-200 ease-out">
                 <Card className="overflow-hidden h-full flex flex-col border-border/40 bg-card hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 rounded-2xl">
                     {/* Image Container */}
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
@@ -37,6 +27,7 @@ export function AppCard({ app }: AppCardProps) {
                                     src={app.thumbnail_url!}
                                     alt={app.name}
                                     fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                     className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                                 />
                                 {/* Gradient overlay on hover */}
@@ -79,7 +70,7 @@ export function AppCard({ app }: AppCardProps) {
                         </Button>
                     </CardFooter>
                 </Card>
-            </motion.div>
+            </div>
         </Link>
     )
 }

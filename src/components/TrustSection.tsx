@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Code2, Shield, Zap, RefreshCw, Cpu, HeadphonesIcon } from 'lucide-react'
+import { Code2, Shield, Zap, RefreshCw, Cpu } from 'lucide-react'
 
 const trustItems = [
     {
@@ -29,11 +29,6 @@ const trustItems = [
         title: 'Modern Tech Stack',
         description: 'Built with Next.js, React, TypeScript',
     },
-    {
-        icon: HeadphonesIcon,
-        title: 'Founder Support',
-        description: 'Direct support from the dev team',
-    },
 ]
 
 export function TrustSection() {
@@ -55,7 +50,7 @@ export function TrustSection() {
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+                <div className="flex flex-wrap justify-center gap-6">
                     {trustItems.map((item, index) => (
                         <motion.div
                             key={item.title}
@@ -63,7 +58,7 @@ export function TrustSection() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
-                            className="flex flex-col items-center text-center p-4"
+                            className="flex flex-col items-center text-center p-4 w-40"
                         >
                             <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
                                 <item.icon className="h-7 w-7 text-primary" />
